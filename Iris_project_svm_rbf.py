@@ -16,15 +16,18 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import mean_squared_error
 from sklearn.cross_validation import train_test_split
 
-data = np.load('/home/a_santos/Documents/TEC de Monterrey/Semestre_3/Receonocimiento de patrones/Proyecto_Final_Iris/data.npy')
+#Import .npy data
+path = 'write the path here!!!'
+data = np.load(path)
 
-#%% División de datos
+#%% Random splitting of data
+# In this script I try with different splitings
 data_train_1, data_test_1 = train_test_split(data, test_size=0.4)
 data_train_2, data_test_2 = train_test_split(data, test_size=0.3)
 data_train_3, data_test_3 = train_test_split(data, test_size=0.2)
 data_train_4, data_test_4 = train_test_split(data, test_size=0.1)
 
-#
+# Data assigning to variables
 X_train_1 = data_train_1[:, 0:4]
 X_train_2 = data_train_2[:, 0:4]
 X_train_3 = data_train_3[:, 0:4]
@@ -45,14 +48,15 @@ Y_test_2 = data_test_2[:, 4]
 Y_test_3 = data_test_3[:, 4]
 Y_test_4 = data_test_4[:, 4]
 
-# Creación de listas de variables
+# Variable lists creation
 X_train_list = ['X_train_1', 'X_train_2', 'X_train_3', 'X_train_4']
 Y_train_list = ['Y_train_1', 'Y_train_2', 'Y_train_3', 'Y_train_4']
 
 X_test_list = ['X_test_1', 'X_test_2', 'X_test_3', 'X_test_4']
 Y_test_list = ['Y_test_1', 'Y_test_2', 'Y_test_3', 'Y_test_4']
 
-#%% Datos de entrenamiento
+#%% Working with the training data
+# Running the different splits
 
 success_rate_train = np.zeros([4, 1])
 mse_train = np.zeros([4, 1])
@@ -77,7 +81,8 @@ for i in range(4):
     print('running = ', i+1, '  time = ', elapsed_train[i])
     k = k + 1
    
-# Ploteo de matrices de confusión para los datos de prueba
+#************************ Plot matrices confusion *************************************************
+
 class_names = ['YES', 'NO']
 
 def plot_confusion_matrix(cm, classes,
@@ -132,7 +137,7 @@ plt.subplot(224)
 plot_confusion_matrix(cnf_matrix_train[:, :, 3].astype(int), classes=class_names,
                       title='Default payments / Train data / run 4')
 
-#%% Datos de prueba
+#%% Working with the testing data
 success_rate_test = np.zeros([4, 1])
 mse_test = np.zeros([4, 1])
 cnf_matrix_test = np.zeros([3, 3, 4])
@@ -158,8 +163,7 @@ for i in range(4):
     print('running = ', i+1, '  time = ', elapsed_test[i])
     k = k + 1
     
-#*****************************************************************************
-# Ploteo de matrices de confusión para los datos de prueba
+#*************** Plot matrices confusion for the testing data *********************************
 class_names = ['YES', 'NO']
 
 def plot_confusion_matrix(cm, classes,
