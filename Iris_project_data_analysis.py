@@ -4,6 +4,13 @@
 Created on Mon Nov 27 17:52:02 2017
 
 @author: a_santos
+
+My proposal to do a data analysis with box diagrams,
+histograms and descriptions.
+
+The data are also saved as .npy file to an easier
+loading.
+
 """
 
 import numpy as np
