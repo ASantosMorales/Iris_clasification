@@ -10,7 +10,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data_open = open('/home/a_santos/Documents/TEC de Monterrey/Semestre_3/Receonocimiento de patrones/Proyecto_Final_Iris/iris.data', 'r')
+path = 'write the corresponding path here!!!'
+data_open = open(path, 'r')
 data_open = data_open.readlines()
 
 data = []
