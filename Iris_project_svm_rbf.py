@@ -5,7 +5,7 @@ Created on Wed Nov 29 11:48:16 2017
 
 @author: a_santos
 
-My proposal to solve the classification problem of the
+My proposal to solve the classification problem of
 Iris classification using a support vector machine (SVM)
 with Radial Basis Function ('rbf') kernel.
 
