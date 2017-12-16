@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Nov 28 23:33:52 2017
+
+@author: a_santos
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+import itertools
+import time
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import mean_squared_error
+from sklearn.cross_validation import train_test_split
+
+data = np.load('/home/a_santos/Documents/TEC de Monterrey/Semestre_3/Receonocimiento de patrones/Proyecto_Final_Iris/data.npy')
+
+#%% División de datos
+data_train_1, data_test_1 = train_test_split(data, test_size=0.4)
+data_train_2, data_test_2 = train_test_split(data, test_size=0.3)
+data_train_3, data_test_3 = train_test_split(data, test_size=0.2)
+data_train_4, data_test_4 = train_test_split(data, test_size=0.1)
+
+#
+X_train_1 = data_train_1[:, 0:4]
+X_train_2 = data_train_2[:, 0:4]
+X_train_3 = data_train_3[:, 0:4]
+X_train_4 = data_train_4[:, 0:4]
+
+X_test_1 = data_test_1[:, 0:4]
+X_test_2 = data_test_2[:, 0:4]
+X_test_3 = data_test_3[:, 0:4]
+X_test_4 = data_test_4[:, 0:4]
+
+Y_train_1 = data_train_1[:, 4]
+Y_train_2 = data_train_2[:, 4]
+Y_train_3 = data_train_3[:, 4]
+Y_train_4 = data_train_4[:, 4]
+
+Y_test_1 = data_test_1[:, 4]
+Y_test_2 = data_test_2[:, 4]
+Y_test_3 = data_test_3[:, 4]
+Y_test_4 = data_test_4[:, 4]
+
+# Creación de listas de variables
+X_train_list = ['X_train_1', 'X_train_2', 'X_train_3', 'X_train_4']
+Y_train_list = ['Y_train_1', 'Y_train_2', 'Y_train_3', 'Y_train_4']
+
+X_test_list = ['X_test_1', 'X_test_2', 'X_test_3', 'X_test_4']
+Y_test_list = ['Y_test_1', 'Y_test_2', 'Y_test_3', 'Y_test_4']
+
+#%% Datos de entrenamiento
+
+success_rate_train = np.zeros([4, 1])
+mse_train = np.zeros([4, 1])
+cnf_matrix_train = np.zeros([3, 3, 4])
+elapsed_train = np.zeros([4, 1])
+k = 0
+for i in range(4):
+    print('New running')
+    X_train = eval(X_train_list[i])
+    Y_train = eval(Y_train_list[i])
+    tree = DecisionTreeClassifier()
+    t = time.time()
+    tree.fit(X_train, Y_train)
+    print('Training ok!')
+    Y_train_out = tree.predict(X_train)
+    elapsed_train[i] = time.time() - t
+    cnf_matrix_train[:, :, i] = confusion_matrix(Y_train, Y_train_out)
+    success_rate_train[i] = ((cnf_matrix_train[0, 0, i] + cnf_matrix_train[1, 1, i] + cnf_matrix_train[2, 2, i]) / \
+            sum(sum(cnf_matrix_train[:, :, i])))
+    mse_train[i] = (mean_squared_error(Y_train, Y_train_out))
+    del(tree)
+    print('running = ', i+1, '  time = ', elapsed_train[i])
+    k = k + 1
+
+#*****************************************************************************
+# Ploteo de matrices de confusión para los datos de prueba
+class_names = ['YES', 'NO']
+
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    
+#*****************************************************************************
+plt.figure()
+plt.subplot(221)
+plot_confusion_matrix(cnf_matrix_train[:, :, 0].astype(int), classes=class_names,
+                      title='Default payments / Train data / run 1')
+
+plt.subplot(222)
+plot_confusion_matrix(cnf_matrix_train[:, :, 1].astype(int), classes=class_names,
+                      title='Default payments / Train data / run 2')
+
+plt.subplot(223)
+plot_confusion_matrix(cnf_matrix_train[:, :, 2].astype(int), classes=class_names,
+                      title='Default payments / Train data / run 3')
+
+plt.subplot(224)
+plot_confusion_matrix(cnf_matrix_train[:, :, 3].astype(int), classes=class_names,
+                      title='Default payments / Train data / run 4')
+
+#%% Ploteo de matrices de confusión para los datos de prueba
+success_rate_test = np.zeros([4, 1])
+mse_test = np.zeros([4, 1])
+cnf_matrix_test = np.zeros([3, 3, 4])
+elapsed_test = np.zeros([4, 1])
+k = 0
+for i in range(4):
+    print('New running')
+    X_train = eval(X_train_list[i])
+    Y_train = eval(Y_train_list[i])
+    X_test = eval(X_test_list[i])
+    Y_test = eval(Y_test_list[i])
+    tree = DecisionTreeClassifier()
+    t = time.time()
+    tree.fit(X_train, Y_train)
+    print('Training ok!')
+    Y_test_out = tree.predict(X_test)
+    elapsed_test[i] = time.time() - t
+    cnf_matrix_test[:, :, i] = confusion_matrix(Y_test, Y_test_out)
+    success_rate_test[i] = ((cnf_matrix_test[0, 0, i] + cnf_matrix_test[1, 1, i] + cnf_matrix_test[2, 2, i]) / \
+            sum(sum(cnf_matrix_test[:, :, i])))
+    mse_test[i] = (mean_squared_error(Y_test, Y_test_out))
+    del(tree)
+    print('running = ', i+1, '  time = ', elapsed_test[i])
+    k = k + 1
+
+#*****************************************************************************
+# Ploteo de matrices de confusión para los datos de prueba
+class_names = ['YES', 'NO']
+
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    
+#*****************************************************************************
+plt.figure()
+plt.subplot(221)
+plot_confusion_matrix(cnf_matrix_test[:, :, 0].astype(int), classes=class_names,
+                      title='Default payments / Test data / run 1')
+
+plt.subplot(222)
+plot_confusion_matrix(cnf_matrix_test[:, :, 1].astype(int), classes=class_names,
+                      title='Default payments / Test data / run 2')
+
+plt.subplot(223)
+plot_confusion_matrix(cnf_matrix_test[:, :, 2].astype(int), classes=class_names,
+                      title='Default payments / Test data / run 3')
+
+plt.subplot(224)
+plot_confusion_matrix(cnf_matrix_test[:, :, 3].astype(int), classes=class_names,
+                      title='Default payments / Test data / run 4')
