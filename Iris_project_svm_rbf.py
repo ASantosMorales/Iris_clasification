@@ -4,6 +4,14 @@
 Created on Wed Nov 29 11:48:16 2017
 
 @author: a_santos
+
+My proposal to solve the classification problem of the
+Iris classification using a support vector machine (SVM)
+with Radial Basis Function ('rbf') kernel.
+
+Before this script it is necessary to access to data_analysis
+script because there is a pre-processing step.
+
 """
 
 import numpy as np
