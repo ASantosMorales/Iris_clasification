@@ -31,19 +31,19 @@ del(outs)
 del(i)
 del(data_open)
 del(data_open_1)
-#%% Descripción de los datos originales. Máximos, mínimos, medias, etc
+#%% Data description (Maximums, minimums, means, standard deviations, etc.)
 dataframe = pd.DataFrame(data[:, 0:4], columns=['Sepal_length_(cm)', 'Sepal_width_(cm)', 
                                         'Petal_length_(cm)', 'Petal_width_(cm)'])
 analysis = dataframe.describe()
 
-#%% Diagramas de caja usando librerías propias de Python con los datos originales
+#%% Box diagrams
 plt.figure()
 plt.boxplot(data[:, 0:4], labels = ['X_1', 'X_2', 'X_3', 'X_4'])
 plt.ylabel('centimeters')
 plt.title('Characteristics')
 plt.grid(True)
 
-#%% Ploteo de histogramas de los datos originales
+#%% Histograms
 f, axes = plt.subplots(2, 2)
 labels = ['Sepal_length_(cm)', 'Sepal_width_(cm)',
           'Petal_length_(cm)', 'Petal_width_(cm)']
@@ -55,10 +55,10 @@ for i in range(2):
         axes[i, j].set_title(labels[k])
         k = k + 1
 
-#%% MATRIZ DE COVARIANZA
+#%% Covariance matrix
 corr_matrix = np.corrcoef(data.T)
 
-#%% Dispersión de las variables
+#%% Dispersion diagrams
 f, axes = plt.subplots(5, 5)
 
 for i in range(5):
@@ -66,7 +66,7 @@ for i in range(5):
         axes[i, j].plot(data[:, i], data[:, j], 'k.')
 
 #%%***************************************************************************
-#**************************** Guardado de datos ******************************
+#************************** Save data as .npy file ***************************
 #*****************************************************************************
 
 np.save('data.npy', data)
